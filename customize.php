@@ -22,6 +22,7 @@ class WordCamp_StyleImport_Customize {
 	 * Display all WordCamps on WordCamp Central for organizers to choose from.
 	 */
 	function display_page(){
+		global $wpdb;
 		?>
 		<div class="wrap">
 			<h2><?php _e( "Import Style from Another WordCamp", 'wordcamp-style-import' ); ?></h2>
@@ -47,11 +48,24 @@ class WordCamp_StyleImport_Customize {
 					<?php
 						$url = parse_url( 'http://' . trailingslashit( get_post_meta( get_the_ID(), 'URL', true ) ) );
 						$blog_details = get_blog_details( array( 'domain' => $url['host'], 'path' => $url['path'] ), true );
+						$theme = $wpdb->get_var(
+							$sql = sprintf( "SELECT option_value FROM %s%d_options WHERE option_name = 'stylesheet';",
+								$wpdb->base_prefix,
+								$blog_details->blog_id
+							)
+						);
 
 						$import_url = add_query_arg( array(
 							'page'        => 'editcss',
 							'source-site' => $blog_details->blog_id,
 						), $theme_url );
+
+						$preview_url = add_query_arg( array(
+							'url'   => add_query_arg( array(
+								'source-site' => $blog_details->blog_id,
+							), $home_url ),
+							'theme' => $theme,
+						), $customize_url );
 
 						$mshots = "http://s.wordpress.com/mshots/v1/";
 						$mshots .= urlencode( 'http://'. str_replace('.dev','.org', get_post_meta( get_the_ID(), 'URL', true ) ) );
@@ -69,6 +83,7 @@ class WordCamp_StyleImport_Customize {
 
 					<div class="theme-actions">
 						<a class="button button-primary activate" href="<?php echo $import_url; ?>">Import</a>
+						<a class="button button-secondary customize load-customize hide-if-no-customize" href="<?php echo $preview_url; ?>">Live Preview</a>
 					</div><!-- /.theme-actions -->
 				</div>
 
