@@ -1,7 +1,8 @@
 <?php
 
 /**
- *
+ * Display a list of other WordCamps with buttons for Import and Preview.
+ * Use the Customizer to show a live preview, and import the custom CSS on activation.
  */
 class WordCamp_StyleImport_Customize {
 

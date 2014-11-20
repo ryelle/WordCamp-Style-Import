@@ -4,6 +4,9 @@ Plugin Name: WordCamp Style Import
 Version: 0.1.0
 */
 
+/**
+ * Import a style from another WordCamp
+ */
 class WordCamp_StyleImport {
 	private $messages = array();
 
