@@ -64,6 +64,7 @@ class WordCamp_StyleImport_Customize {
 							'url'   => add_query_arg( array(
 								'source-site' => $blog_details->blog_id,
 							), $home_url ),
+							'source-site' => $blog_details->blog_id,
 							'theme' => $theme,
 						), $customize_url );
 
