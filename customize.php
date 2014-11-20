@@ -125,7 +125,7 @@ class WordCamp_StyleImport_Customize {
 		$wp_customize->add_control( 'show_preview', array(
 			'label'       => $label,
 			'section'     => 'wcsi_preview',
-			'type'        => 'text',
+			'type'        => 'hidden',
 			'description' => __( 'Placeholder text that could be a description.', 'wordcamp-style-import' ),
 		) );
 	}
