@@ -96,7 +96,12 @@ class WordCamp_StyleImport_Customize {
 	}
 
 	function add_link_tag(){
-		add_action( 'wp_head', array( $this, 'link_tag' ) );
+		add_action( 'wp_head', array( $this, 'print_link_tag' ) );
+	}
+
+	function print_link_tag(){
+		$href = $this->link_tag();
+		echo '<link rel="stylesheet" id="custom-css-css" type="text/css" href="' . esc_url( $href ) . '" />';
 	}
 
 	/**
@@ -133,10 +138,9 @@ class WordCamp_StyleImport_Customize {
 		$href = add_query_arg( 'csrev', (int) get_option( $option . '_rev' ), $href );
 
 		$href = apply_filters( 'safecss_href', $href, $blog_id );
-		?>
-		<link rel="stylesheet" id="custom-css-css" type="text/css" href="<?php echo esc_url( $href ); ?>" />
-		<?php
 		restore_current_blog();
+
+		return $href;
 	}
 }
 new WordCamp_StyleImport_Customize;
