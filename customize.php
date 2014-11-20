@@ -9,6 +9,7 @@ class WordCamp_StyleImport_Customize {
 	function __construct(){
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
 		add_filter( 'customize_preview_init', array( $this, 'add_link_tag' ) );
+		add_action( 'customize_register', array( $this, 'customize_register' ) );
 	}
 
 	/**
@@ -94,6 +95,39 @@ class WordCamp_StyleImport_Customize {
 		</div>
 		<?php
 		restore_current_blog();
+	}
+
+	/**
+	 * Add a section & control for our style preview.
+	 *
+	 * @param WP_Customize_Manager $wp_customize Theme Customizer object.
+	 */
+	function customize_register( $wp_customize ){
+		$source_site = isset( $_GET['source-site'] )? absint( $_GET['source-site'] ): 0;
+		if ( ! $source_site ) {
+			return;
+		}
+
+		switch_to_blog( $source_site );
+		$label = sprintf( __( 'Previewing styles from %s', 'wordcamp-style-import' ), get_bloginfo( 'name' ) );
+		$url = $this->link_tag();
+		restore_current_blog();
+
+		$wp_customize->add_section( 'wcsi_preview' , array(
+			'title'    => __( 'WordCamp Style Import', 'wordcamp-style-import' ),
+			'priority' => 10,
+		) );
+
+		$wp_customize->add_setting( 'show_preview', array(
+			'default' => $url,
+		) );
+
+		$wp_customize->add_control( 'show_preview', array(
+			'label'       => $label,
+			'section'     => 'wcsi_preview',
+			'type'        => 'text',
+			'description' => __( 'Placeholder text that could be a description.', 'wordcamp-style-import' ),
+		) );
 	}
 
 	function add_link_tag(){
