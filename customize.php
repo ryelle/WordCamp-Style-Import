@@ -104,14 +104,17 @@ class WordCamp_StyleImport_Customize {
 	 */
 	function customize_register( $wp_customize ){
 		$source_site = isset( $_GET['source-site'] )? absint( $_GET['source-site'] ): 0;
-		if ( ! $source_site ) {
-			return;
-		}
 
-		switch_to_blog( $source_site );
-		$label = sprintf( __( 'Previewing styles from %s', 'wordcamp-style-import' ), get_bloginfo( 'name' ) );
-		$url = $this->link_tag();
-		restore_current_blog();
+		if ( $source_site ) {
+			switch_to_blog( $source_site );
+			$label = sprintf( __( 'Previewing styles from %s', 'wordcamp-style-import' ), get_bloginfo( 'name' ) );
+			$url = $this->link_tag();
+			restore_current_blog();
+		} else {
+			// Doesn't really matter, we just need to keep the setting registered.
+			$label = __( 'Previewing styles', 'wordcamp-style-import' );
+			$url = '';
+		}
 
 		$wp_customize->add_section( 'wcsi_preview' , array(
 			'title'    => __( 'WordCamp Style Import', 'wordcamp-style-import' ),
