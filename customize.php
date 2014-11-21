@@ -138,7 +138,9 @@ class WordCamp_StyleImport_Customize {
 	}
 
 	function print_link_tag(){
-		$href = $this->link_tag();
+		if ( ! $href = get_theme_mod( 'wcsi_show_preview', false ) ) {
+			$href = $this->link_tag();
+		}
 		echo '<link rel="stylesheet" id="custom-css-css" type="text/css" href="' . esc_url( $href ) . '" />';
 	}
 
