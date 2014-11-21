@@ -8,7 +8,7 @@ class WordCamp_StyleImport_Customize {
 
 	function __construct(){
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
-		add_filter( 'customize_preview_init', array( $this, 'add_link_tag' ) );
+		add_action( 'customize_preview_init', array( $this, 'add_link_tag' ) );
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
 	}
 
