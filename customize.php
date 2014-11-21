@@ -10,6 +10,7 @@ class WordCamp_StyleImport_Customize {
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
 		add_action( 'customize_preview_init', array( $this, 'add_link_tag' ) );
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
+		add_action( 'customize_save_wcsi_show_preview', array( $this, 'save_imported_style' ) );
 	}
 
 	/**
@@ -181,6 +182,42 @@ class WordCamp_StyleImport_Customize {
 		restore_current_blog();
 
 		return $href;
+	}
+
+	/**
+	 * Import the selected site's CSS after "Save & Activate" in the customizer.
+	 *
+	 * @param  WP_Customize_Setting  $setting  Setting object for the setting we're saving.
+	 * @return  void
+	 */
+	function save_imported_style( $setting ) {
+		$css = Jetpack_Custom_CSS::get_css();
+		$current_post = Jetpack_Custom_CSS::get_current_revision();
+		$current_preprocessor = get_post_meta( $current_post['ID'], 'custom_css_preprocessor', true );
+
+		// Get our source blog and CSS
+		$url = parse_url( $setting->post_value() );
+		$blog_details = get_blog_details( array( 'domain' => $url['host'], 'path' => $url['path'] ), true );
+		switch_to_blog( $blog_details->blog_id );
+
+		$imported_css = Jetpack_Custom_CSS::get_css();
+		$imported_post = Jetpack_Custom_CSS::get_current_revision();
+		$imported_preprocessor = get_post_meta( $imported_post['ID'], 'custom_css_preprocessor', true );
+
+		if ( $imported_preprocessor && ( $current_preprocessor != $imported_preprocessor ) ){
+			$preprocessors = apply_filters( 'jetpack_custom_css_preprocessors', array() );
+
+			if ( isset( $preprocessors[$imported_preprocessor] ) ) {
+				$imported_css = call_user_func( $preprocessors[$imported_preprocessor]['callback'], $imported_css );
+			}
+		}
+		restore_current_blog();
+
+		// Save
+		Jetpack_Custom_CSS::save( array(
+			'css'          => $css . "\n" . $imported_css,
+			'preprocessor' => $current_preprocessor,
+		) );
 	}
 }
 new WordCamp_StyleImport_Customize;
