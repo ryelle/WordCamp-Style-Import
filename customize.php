@@ -194,6 +194,7 @@ class WordCamp_StyleImport_Customize {
 		$css = Jetpack_Custom_CSS::get_css();
 		$current_post = Jetpack_Custom_CSS::get_current_revision();
 		$current_preprocessor = get_post_meta( $current_post['ID'], 'custom_css_preprocessor', true );
+		$current_theme = get_stylesheet();
 
 		// Get our source blog and CSS
 		$url = parse_url( $setting->post_value() );
@@ -203,6 +204,7 @@ class WordCamp_StyleImport_Customize {
 		$imported_css = Jetpack_Custom_CSS::get_css();
 		$imported_post = Jetpack_Custom_CSS::get_current_revision();
 		$imported_preprocessor = get_post_meta( $imported_post['ID'], 'custom_css_preprocessor', true );
+		$imported_theme = wp_get_theme();
 
 		if ( $imported_preprocessor && ( $current_preprocessor != $imported_preprocessor ) ){
 			$preprocessors = apply_filters( 'jetpack_custom_css_preprocessors', array() );
@@ -214,8 +216,13 @@ class WordCamp_StyleImport_Customize {
 		restore_current_blog();
 
 		// Save
+		if ( $imported_theme->stylesheet != $current_theme ) {
+			$css = $imported_css;
+		} else {
+			$css = $css . "\n" . $imported_css;
+		}
 		Jetpack_Custom_CSS::save( array(
-			'css'          => $css . "\n" . $imported_css,
+			'css'          => $css,
 			'preprocessor' => $current_preprocessor,
 		) );
 	}
