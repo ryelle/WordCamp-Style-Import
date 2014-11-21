@@ -63,11 +63,9 @@ class WordCamp_StyleImport_Customize {
 						), $theme_url );
 
 						$preview_url = add_query_arg( array(
-							'url'   => add_query_arg( array(
-								'source-site' => $blog_details->blog_id,
-							), $home_url ),
+							'url'         => $home_url,
 							'source-site' => $blog_details->blog_id,
-							'theme' => $theme,
+							'theme'       => $theme,
 						), $customize_url );
 
 						$mshots = "http://s.wordpress.com/mshots/v1/";
