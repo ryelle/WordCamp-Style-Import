@@ -118,11 +118,11 @@ class WordCamp_StyleImport_Customize {
 			'priority' => 10,
 		) );
 
-		$wp_customize->add_setting( 'show_preview', array(
-			'default' => $url,
+		$wp_customize->add_setting( 'wcsi_show_preview', array(
+			'default'   => $url,
 		) );
 
-		$wp_customize->add_control( 'show_preview', array(
+		$wp_customize->add_control( 'wcsi_show_preview', array(
 			'label'       => $label,
 			'section'     => 'wcsi_preview',
 			'type'        => 'hidden',
