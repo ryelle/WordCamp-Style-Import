@@ -7,6 +7,7 @@
 class WordCamp_StyleImport_Customize {
 
 	function __construct(){
+		add_action( 'init', array( $this, 'customizer_buffer' ) );
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
 		add_action( 'customize_preview_init', array( $this, 'add_link_tag' ) );
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
@@ -229,6 +230,20 @@ class WordCamp_StyleImport_Customize {
 			'preprocessor' => $current_preprocessor,
 		) );
 	}
+
+	function customizer_buffer() {
+		$source_site = isset( $_GET['source-site'] )? absint( $_GET['source-site'] ): 0;
+		if ( $source_site ) {
+			ob_start( array( $this, 'buffer' ) );
+		}
+	}
+
+	function buffer( $html ) {
+		$replace = "<script type='text/javascript'>_wpCustomizeSettings.theme.active = false;</script>\n</body>";
+		$html = str_replace( '</body>', $replace, $html );
+		return $html;
+	}
+
 }
 new WordCamp_StyleImport_Customize;
 
