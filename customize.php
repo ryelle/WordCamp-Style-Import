@@ -33,6 +33,7 @@ class WordCamp_StyleImport_Customize {
 				$home_url = home_url();
 				$theme_url = admin_url( 'themes.php' );
 				$customize_url = admin_url( 'customize.php' );
+				$current_theme = get_stylesheet();
 
 				switch_to_blog( 2 );
 				$wordcamps = wcsi_get_wordcamps( array(
@@ -83,7 +84,11 @@ class WordCamp_StyleImport_Customize {
 					<h3 class="theme-name"><?php the_title(); ?></h3>
 
 					<div class="theme-actions">
+						<?php if ( $theme == $current_theme ) : ?>
 						<a class="button button-primary activate" href="<?php echo $import_url; ?>">Import</a>
+						<?php else : ?>
+						<a class="button button-primary activate disabled" href="#">Import</a>
+						<?php endif; ?>
 						<a class="button button-secondary customize load-customize hide-if-no-customize" href="<?php echo $preview_url; ?>">Live Preview</a>
 					</div><!-- /.theme-actions -->
 				</div>
