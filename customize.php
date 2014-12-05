@@ -116,7 +116,7 @@ class WordCamp_StyleImport_Customize {
 			restore_current_blog();
 		} else {
 			// Doesn't really matter, we just need to keep the setting registered.
-			$label = __( 'Previewing styles', 'wordcamp-style-import' );
+			$label = __( 'Not previewing another WordCamp\'s site.', 'wordcamp-style-import' );
 			$url = '';
 		}
 
