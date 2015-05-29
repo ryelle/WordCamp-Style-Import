@@ -47,11 +47,18 @@ class WordCamp_StyleImport_Customize {
 
 			<div class="theme-browser">
 			<?php while ( $wordcamps->have_posts() ): $wordcamps->the_post(); ?>
-
-				<div class="theme">
 					<?php
 						$url = parse_url( 'http://' . trailingslashit( get_post_meta( get_the_ID(), 'URL', true ) ) );
-						$blog_details = get_blog_details( array( 'domain' => $url['host'], 'path' => $url['path'] ), true );
+						$blog_details = false;
+
+						if ( isset( $url['host'] ) && isset( $url['path'] ) ) {
+							$blog_details = get_blog_details( array( 'domain' => $url['host'], 'path' => $url['path'] ), true );
+						}
+
+						if ( ! $blog_details ) {
+							continue;
+						}
+
 						$theme = $wpdb->get_var(
 							$sql = sprintf( "SELECT option_value FROM %s%d_options WHERE option_name = 'stylesheet';",
 								$wpdb->base_prefix,
@@ -78,6 +85,7 @@ class WordCamp_StyleImport_Customize {
 						), $mshots );
 					?>
 
+				<div class="theme">
 					<div class="theme-screenshot">
 						<img src="<?php echo $mshots; ?>" />
 					</div>
