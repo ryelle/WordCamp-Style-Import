@@ -47,38 +47,45 @@ class WordCamp_StyleImport_Customize {
 
 			<div class="theme-browser">
 			<?php while ( $wordcamps->have_posts() ): $wordcamps->the_post(); ?>
+				<?php
+					$url = parse_url( trailingslashit( get_post_meta( get_the_ID(), 'URL', true ) ) );
+					$blog_details = false;
+
+					if ( isset( $url['host'] ) && isset( $url['path'] ) ) {
+						$blog_details = get_blog_details( array( 'domain' => $url['host'], 'path' => $url['path'] ), true );
+					}
+
+					if ( ! $blog_details ) {
+						continue;
+					}
+
+					$theme = $wpdb->get_var(
+						$sql = sprintf( "SELECT option_value FROM %s%d_options WHERE option_name = 'stylesheet';",
+							$wpdb->base_prefix,
+							$blog_details->blog_id
+						)
+					);
+
+					$import_url = add_query_arg( array(
+						'page'        => 'editcss',
+						'source-site' => $blog_details->blog_id,
+					), $theme_url );
+
+					$preview_url = add_query_arg( array(
+						'url'         => $home_url,
+						'source-site' => $blog_details->blog_id,
+						'theme'       => $theme,
+					), $customize_url );
+
+					$mshots = "http://s.wordpress.com/mshots/v1/";
+					$mshots .= urlencode( 'http://'. str_replace('.dev','.org', get_post_meta( get_the_ID(), 'URL', true ) ) );
+					$mshots = add_query_arg( array(
+						'w' => 375,
+						'h' => 250,
+					), $mshots );
+				?>
 
 				<div class="theme">
-					<?php
-						$url = parse_url( trailingslashit( get_post_meta( get_the_ID(), 'URL', true ) ) );
-						$blog_details = get_blog_details( array( 'domain' => $url['host'], 'path' => $url['path'] ), true );
-
-						$theme = $wpdb->get_var(
-							$sql = sprintf( "SELECT option_value FROM %s%d_options WHERE option_name = 'stylesheet';",
-								$wpdb->base_prefix,
-								$blog_details->blog_id
-							)
-						);
-
-						$import_url = add_query_arg( array(
-							'page'        => 'editcss',
-							'source-site' => $blog_details->blog_id,
-						), $theme_url );
-
-						$preview_url = add_query_arg( array(
-							'url'         => $home_url,
-							'source-site' => $blog_details->blog_id,
-							'theme'       => $theme,
-						), $customize_url );
-
-						$mshots = "http://s.wordpress.com/mshots/v1/";
-						$mshots .= urlencode( str_replace( '.dev','.org', get_post_meta( get_the_ID(), 'URL', true ) ) );
-						$mshots = add_query_arg( array(
-							'w' => 375,
-							'h' => 250,
-						), $mshots );
-					?>
-
 					<div class="theme-screenshot">
 						<img src="<?php echo $mshots; ?>" />
 					</div>
