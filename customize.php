@@ -50,9 +50,8 @@ class WordCamp_StyleImport_Customize {
 
 				<div class="theme">
 					<?php
-						$url = parse_url( trailingslashit( get_post_meta( get_the_ID(), 'URL', true ) ) );
+						$url = parse_url( 'http://' . trailingslashit( get_post_meta( get_the_ID(), 'URL', true ) ) );
 						$blog_details = get_blog_details( array( 'domain' => $url['host'], 'path' => $url['path'] ), true );
-
 						$theme = $wpdb->get_var(
 							$sql = sprintf( "SELECT option_value FROM %s%d_options WHERE option_name = 'stylesheet';",
 								$wpdb->base_prefix,
@@ -72,7 +71,7 @@ class WordCamp_StyleImport_Customize {
 						), $customize_url );
 
 						$mshots = "http://s.wordpress.com/mshots/v1/";
-						$mshots .= urlencode( str_replace( '.dev','.org', get_post_meta( get_the_ID(), 'URL', true ) ) );
+						$mshots .= urlencode( 'http://'. str_replace('.dev','.org', get_post_meta( get_the_ID(), 'URL', true ) ) );
 						$mshots = add_query_arg( array(
 							'w' => 375,
 							'h' => 250,
