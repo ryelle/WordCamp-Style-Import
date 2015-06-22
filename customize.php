@@ -78,7 +78,7 @@ class WordCamp_StyleImport_Customize {
 					), $customize_url );
 
 					$mshots = "http://s.wordpress.com/mshots/v1/";
-					$mshots .= urlencode( 'http://'. str_replace('.dev','.org', get_post_meta( get_the_ID(), 'URL', true ) ) );
+					$mshots .= urlencode( str_replace('.dev','.org', get_post_meta( get_the_ID(), 'URL', true ) ) );
 					$mshots = add_query_arg( array(
 						'w' => 375,
 						'h' => 250,
