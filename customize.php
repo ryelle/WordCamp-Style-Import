@@ -6,7 +6,7 @@
  */
 class WordCamp_StyleImport_Customize {
 
-	function __construct(){
+	function __construct() {
 		add_action( 'init', array( $this, 'customizer_buffer' ) );
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
 		add_action( 'customize_preview_init', array( $this, 'add_link_tag' ) );
@@ -24,7 +24,7 @@ class WordCamp_StyleImport_Customize {
 	/**
 	 * Display all WordCamps on WordCamp Central for organizers to choose from.
 	 */
-	function display_page(){
+	function display_page() {
 		global $wpdb;
 		?>
 		<div class="wrap">
@@ -78,7 +78,7 @@ class WordCamp_StyleImport_Customize {
 					), $customize_url );
 
 					$mshots = "http://s.wordpress.com/mshots/v1/";
-					$mshots .= urlencode( str_replace('.dev','.org', get_post_meta( get_the_ID(), 'URL', true ) ) );
+					$mshots .= urlencode( str_replace( '.dev', '.org', get_post_meta( get_the_ID(), 'URL', true ) ) );
 					$mshots = add_query_arg( array(
 						'w' => 375,
 						'h' => 250,
@@ -94,9 +94,9 @@ class WordCamp_StyleImport_Customize {
 
 					<div class="theme-actions">
 						<?php if ( $theme == $current_theme ) : ?>
-						<a class="button button-primary activate" href="<?php echo $import_url; ?>">Import</a>
+							<a class="button button-primary activate" href="<?php echo $import_url; ?>">Import</a>
 						<?php else : ?>
-						<a class="button button-primary activate disabled" href="#">Import</a>
+							<a class="button button-primary activate disabled" href="#">Import</a>
 						<?php endif; ?>
 						<a class="button button-secondary customize load-customize hide-if-no-customize" href="<?php echo $preview_url; ?>">Live Preview</a>
 					</div><!-- /.theme-actions -->
@@ -115,8 +115,8 @@ class WordCamp_StyleImport_Customize {
 	 *
 	 * @param WP_Customize_Manager $wp_customize Theme Customizer object.
 	 */
-	function customize_register( $wp_customize ){
-		$source_site = isset( $_GET['source-site'] )? absint( $_GET['source-site'] ): 0;
+	function customize_register( $wp_customize ) {
+		$source_site = isset( $_GET['source-site'] ) ? absint( $_GET['source-site'] ) : 0;
 
 		if ( $source_site ) {
 			switch_to_blog( $source_site );
@@ -129,13 +129,13 @@ class WordCamp_StyleImport_Customize {
 			$url = '';
 		}
 
-		$wp_customize->add_section( 'wcsi_preview' , array(
+		$wp_customize->add_section( 'wcsi_preview', array(
 			'title'    => __( 'WordCamp Style Import', 'wordcamp-style-import' ),
 			'priority' => 10,
 		) );
 
 		$wp_customize->add_setting( 'wcsi_show_preview', array(
-			'default'   => $url,
+			'default' => $url,
 		) );
 
 		$wp_customize->add_control( 'wcsi_show_preview', array(
@@ -146,11 +146,11 @@ class WordCamp_StyleImport_Customize {
 		) );
 	}
 
-	function add_link_tag(){
+	function add_link_tag() {
 		add_action( 'wp_head', array( $this, 'print_link_tag' ) );
 	}
 
-	function print_link_tag(){
+	function print_link_tag() {
 		if ( ! $href = get_theme_mod( 'wcsi_show_preview', false ) ) {
 			$href = $this->link_tag();
 		}
@@ -160,8 +160,8 @@ class WordCamp_StyleImport_Customize {
 	/**
 	 * Called on customize initialization, add the previewing CSS.
 	 */
-	function link_tag(){
-		$source_site = isset( $_GET['source-site'] )? absint( $_GET['source-site'] ): 0;
+	function link_tag() {
+		$source_site = isset( $_GET['source-site'] ) ? absint( $_GET['source-site'] ) : 0;
 		if ( ! $source_site ) {
 			return;
 		}
@@ -174,15 +174,16 @@ class WordCamp_StyleImport_Customize {
 		$css = '';
 		$safecss_post = Jetpack_Custom_CSS::get_current_revision();
 
-		if ( !empty( $safecss_post['post_content'] ) ) {
+		if ( ! empty( $safecss_post['post_content'] ) ) {
 			$css = $safecss_post['post_content'];
 		}
 
 
 		$css = str_replace( array( '\\\00BB \\\0020', '\0BB \020', '0BB 020' ), '\00BB \0020', $css );
 
-		if ( $css == '' )
+		if ( $css == '' ) {
 			return;
+		}
 
 		$href = home_url( '/' );
 		$href = add_query_arg( 'custom-css', 1, $href );
@@ -199,8 +200,9 @@ class WordCamp_StyleImport_Customize {
 	/**
 	 * Import the selected site's CSS after "Save & Activate" in the customizer.
 	 *
-	 * @param  WP_Customize_Setting  $setting  Setting object for the setting we're saving.
-	 * @return  void
+	 * @param WP_Customize_Setting $setting Setting object for the setting we're saving.
+	 *
+	 * @return void
 	 */
 	function save_imported_style( $setting ) {
 		$css = Jetpack_Custom_CSS::get_css();
@@ -218,11 +220,11 @@ class WordCamp_StyleImport_Customize {
 		$imported_preprocessor = get_post_meta( $imported_post['ID'], 'custom_css_preprocessor', true );
 		$imported_theme = wp_get_theme();
 
-		if ( $imported_preprocessor && ( $current_preprocessor != $imported_preprocessor ) ){
+		if ( $imported_preprocessor && ( $current_preprocessor != $imported_preprocessor ) ) {
 			$preprocessors = apply_filters( 'jetpack_custom_css_preprocessors', array() );
 
-			if ( isset( $preprocessors[$imported_preprocessor] ) ) {
-				$imported_css = call_user_func( $preprocessors[$imported_preprocessor]['callback'], $imported_css );
+			if ( isset( $preprocessors[ $imported_preprocessor ] ) ) {
+				$imported_css = call_user_func( $preprocessors[ $imported_preprocessor ]['callback'], $imported_css );
 			}
 		}
 		restore_current_blog();
@@ -240,7 +242,7 @@ class WordCamp_StyleImport_Customize {
 	}
 
 	function customizer_buffer() {
-		$source_site = isset( $_GET['source-site'] )? absint( $_GET['source-site'] ): 0;
+		$source_site = isset( $_GET['source-site'] ) ? absint( $_GET['source-site'] ) : 0;
 		if ( $source_site ) {
 			ob_start( array( $this, 'buffer' ) );
 		}
@@ -253,12 +255,14 @@ class WordCamp_StyleImport_Customize {
 	}
 
 }
+
 new WordCamp_StyleImport_Customize;
 
 /* Hackery below? */
 
-if ( !defined( 'WCPT_POST_TYPE_ID' ) )
+if ( ! defined( 'WCPT_POST_TYPE_ID' ) ) {
 	define( 'WCPT_POST_TYPE_ID', apply_filters( 'wcpt_post_type_id', 'wordcamp' ) );
+}
 
 /**
  * wcsi_has_wordcamps(), from wcpt_has_wordcamps()
@@ -269,11 +273,12 @@ if ( !defined( 'WCPT_POST_TYPE_ID' ) )
  * @subpackage Template Tags
  * @since WordCamp Post Type (0.1)
  *
- * @param   array  $args Possible arguments to change returned WordCamps
- * @return  object  WP_Query object of WordCamps
+ * @param array $args Possible arguments to change returned WordCamps
+ *
+ * @return object WP_Query object of WordCamps
  */
 function wcsi_get_wordcamps( $args = '' ) {
-	$default = array (
+	$default = array(
 		// Narrow query down to WordCamp Post Type
 		'post_type'        => WCPT_POST_TYPE_ID,
 
@@ -305,14 +310,14 @@ function wcsi_get_wordcamps( $args = '' ) {
 	$wcpt_template->paged          = $paged;
 
 	// Only add pagination if query returned results
-	if ( (int)$wcpt_template->found_posts && (int)$wcpt_template->posts_per_page ) {
+	if ( (int) $wcpt_template->found_posts && (int) $wcpt_template->posts_per_page ) {
 
 		// Pagination settings with filter
-		$wcpt_pagination = apply_filters( 'wcpt_pagination', array (
+		$wcpt_pagination = apply_filters( 'wcpt_pagination', array(
 			'base'      => add_query_arg( 'wcpage', '%#%' ),
 			'format'    => '',
-			'total'     => ceil( (int)$wcpt_template->found_posts / (int)$posts_per_page ),
-			'current'   => (int)$wcpt_template->paged,
+			'total'     => ceil( (int) $wcpt_template->found_posts / (int) $posts_per_page ),
+			'current'   => (int) $wcpt_template->paged,
 			'prev_text' => '&larr;',
 			'next_text' => '&rarr;',
 			'mid_size'  => 1
