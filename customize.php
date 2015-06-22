@@ -160,11 +160,13 @@ class WordCamp_StyleImport_Customize {
 
 	/**
 	 * Called on customize initialization, add the previewing CSS.
+	 *
+	 * @return string
 	 */
 	function link_tag() {
 		$source_site = isset( $_GET['source-site'] ) ? absint( $_GET['source-site'] ) : 0;
 		if ( ! $source_site ) {
-			return;
+			return '';
 		}
 
 		if ( ! class_exists( 'Jetpack_Custom_CSS' ) ) {
@@ -183,7 +185,7 @@ class WordCamp_StyleImport_Customize {
 
 		if ( $css == '' ) {
 			restore_current_blog();
-			return;
+			return '';
 		}
 
 		$href = home_url( '/' );
