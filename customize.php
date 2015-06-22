@@ -37,7 +37,8 @@ class WordCamp_StyleImport_Customize {
 				$current_theme = get_stylesheet();
 
 				switch_to_blog( 2 );
-				$wordcamps = wcsi_get_wordcamps( array(
+				$wordcamps = new WP_Query( array(
+					'post_type'      => 'wordcamp',
 					'posts_per_page' => -1,
 					'meta_key'       => 'Start Date (YYYY-mm-dd)',
 					'orderby'        => 'meta_value',
@@ -257,75 +258,3 @@ class WordCamp_StyleImport_Customize {
 }
 
 new WordCamp_StyleImport_Customize;
-
-/* Hackery below? */
-
-if ( ! defined( 'WCPT_POST_TYPE_ID' ) ) {
-	define( 'WCPT_POST_TYPE_ID', apply_filters( 'wcpt_post_type_id', 'wordcamp' ) );
-}
-
-/**
- * wcsi_has_wordcamps(), from wcpt_has_wordcamps()
- *
- * The main WordCamp loop. WordPress makes this easy for us.
- *
- * @package WordCamp Post Type
- * @subpackage Template Tags
- * @since WordCamp Post Type (0.1)
- *
- * @param array $args Possible arguments to change returned WordCamps
- *
- * @return object WP_Query object of WordCamps
- */
-function wcsi_get_wordcamps( $args = '' ) {
-	$default = array(
-		// Narrow query down to WordCamp Post Type
-		'post_type'        => WCPT_POST_TYPE_ID,
-
-		// No hierarchy
-		'post_parent'      => '0',
-
-		// 'author', 'date', 'title', 'modified', 'parent', rand',
-		'orderby'          => 'date',
-
-		// 'ASC', 'DESC'
-		'order'            => 'DESC',
-
-		// Default is 15
-		'posts_per_page'   => 15,
-
-		// Page Number
-		'paged'            => 1,
-	);
-
-	// Set up variables
-	$wcpt_q = wp_parse_args( $args, $default );
-	$r      = extract( $wcpt_q );
-
-	// Call the query
-	$wcpt_template = new WP_Query( $wcpt_q );
-
-	// Add pagination values to query object
-	$wcpt_template->posts_per_page = $posts_per_page;
-	$wcpt_template->paged          = $paged;
-
-	// Only add pagination if query returned results
-	if ( (int) $wcpt_template->found_posts && (int) $wcpt_template->posts_per_page ) {
-
-		// Pagination settings with filter
-		$wcpt_pagination = apply_filters( 'wcpt_pagination', array(
-			'base'      => add_query_arg( 'wcpage', '%#%' ),
-			'format'    => '',
-			'total'     => ceil( (int) $wcpt_template->found_posts / (int) $posts_per_page ),
-			'current'   => (int) $wcpt_template->paged,
-			'prev_text' => '&larr;',
-			'next_text' => '&rarr;',
-			'mid_size'  => 1
-		) );
-
-		// Add pagination to query object
-		$wcpt_template->pagination_links = paginate_links( $wcpt_pagination );
-	}
-
-	return $wcpt_template;
-}
