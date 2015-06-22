@@ -58,6 +58,7 @@ class WordCamp_StyleImport {
 
 		$source_name = str_replace( array( 'http://', 'https://' ), '', home_url() );
 		if ( false !== strpos( $css, "/*==Imported from {$source_name}==*/" ) ) {
+			restore_current_blog();
 			$this->add_message( __( "It looks like you've already imported this site.", 'wordcamporg' ) );
 			return $css;
 		}

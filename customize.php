@@ -179,10 +179,10 @@ class WordCamp_StyleImport_Customize {
 			$css = $safecss_post['post_content'];
 		}
 
-
 		$css = str_replace( array( '\\\00BB \\\0020', '\0BB \020', '0BB 020' ), '\00BB \0020', $css );
 
 		if ( $css == '' ) {
+			restore_current_blog();
 			return;
 		}
 
