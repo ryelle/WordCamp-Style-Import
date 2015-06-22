@@ -36,7 +36,7 @@ class WordCamp_StyleImport_Customize {
 				$customize_url = admin_url( 'customize.php' );
 				$current_theme = get_stylesheet();
 
-				switch_to_blog( 2 );
+				switch_to_blog( BLOG_ID_CURRENT_SITE ); // central.wordcamp.org
 				$wordcamps = new WP_Query( array(
 					'post_type'      => 'wordcamp',
 					'posts_per_page' => -1,
