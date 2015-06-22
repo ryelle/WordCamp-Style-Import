@@ -18,7 +18,7 @@ class WordCamp_StyleImport_Customize {
 	 * Add the style selector to the Theme menu
 	 */
 	function add_menu_page() {
-		add_theme_page( __( 'Import Style', 'wordcamp-style-import' ), __( 'Import Style', 'wordcamp-style-import' ), 'edit_theme_options', 'wcsi-sources', array( $this, 'display_page' ) );
+		add_theme_page( __( 'Import Style', 'wordcamporg' ), __( 'Import Style', 'wordcamporg' ), 'edit_theme_options', 'wcsi-sources', array( $this, 'display_page' ) );
 	}
 
 	/**
@@ -28,7 +28,7 @@ class WordCamp_StyleImport_Customize {
 		global $wpdb;
 		?>
 		<div class="wrap">
-			<h2><?php _e( "Import Style from Another WordCamp", 'wordcamp-style-import' ); ?></h2>
+			<h2><?php _e( "Import Style from Another WordCamp", 'wordcamporg' ); ?></h2>
 
 			<?php
 				$home_url = home_url();
@@ -121,17 +121,17 @@ class WordCamp_StyleImport_Customize {
 
 		if ( $source_site ) {
 			switch_to_blog( $source_site );
-			$label = sprintf( __( 'Previewing styles from %s', 'wordcamp-style-import' ), get_bloginfo( 'name' ) );
+			$label = sprintf( __( 'Previewing styles from %s', 'wordcamporg' ), get_bloginfo( 'name' ) );
 			$url = $this->link_tag();
 			restore_current_blog();
 		} else {
 			// Doesn't really matter, we just need to keep the setting registered.
-			$label = __( 'Not previewing another WordCamp\'s site.', 'wordcamp-style-import' );
+			$label = __( 'Not previewing another WordCamp\'s site.', 'wordcamporg' );
 			$url = '';
 		}
 
 		$wp_customize->add_section( 'wcsi_preview', array(
-			'title'    => __( 'WordCamp Style Import', 'wordcamp-style-import' ),
+			'title'    => __( 'WordCamp Style Import', 'wordcamporg' ),
 			'priority' => 10,
 		) );
 
@@ -143,7 +143,7 @@ class WordCamp_StyleImport_Customize {
 			'label'       => $label,
 			'section'     => 'wcsi_preview',
 			'type'        => 'hidden',
-			'description' => __( 'Placeholder text that could be a description.', 'wordcamp-style-import' ),
+			'description' => __( 'Placeholder text that could be a description.', 'wordcamporg' ),
 		) );
 	}
 

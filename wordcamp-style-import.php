@@ -58,7 +58,7 @@ class WordCamp_StyleImport {
 
 		$source_name = str_replace( array( 'http://', 'https://' ), '', home_url() );
 		if ( false !== strpos( $css, "/*==Imported from {$source_name}==*/" ) ) {
-			$this->add_message( __( "It looks like you've already imported this site.", 'wordcamp-style-import' ) );
+			$this->add_message( __( "It looks like you've already imported this site.", 'wordcamporg' ) );
 			return $css;
 		}
 
@@ -67,7 +67,7 @@ class WordCamp_StyleImport {
 		if ( $source_theme->stylesheet != $current_theme ) {
 			restore_current_blog();
 
-			$message = __( "The site you're importing from is using a different base theme. ", 'wordcamp-style-import' );
+			$message = __( "The site you're importing from is using a different base theme.", 'wordcamporg' );
 			$message .= '<a href="' . add_query_arg( 'theme', $source_theme->stylesheet, admin_url( 'themes.php' ) ) . '">';
 			$message .= sprintf( __( "Switch to %s." ), $source_theme );
 			$message .= '</a>';
@@ -91,7 +91,7 @@ class WordCamp_StyleImport {
 		add_filter( 'safecss_css', array( $this, 'clone_css' ) );
 		restore_current_blog();
 
-		$this->add_message( __( "The selected site's CSS has been added below, but has not been saved yet.", 'wordcamp-style-import' ), 'warning' );
+		$this->add_message( __( "The selected site's CSS has been added below, but has not been saved yet.", 'wordcamporg' ), 'warning' );
 
 		return $css . "\n" . $imported_css . "\n/*==Imported from {$source_name}==*/";
 	}
