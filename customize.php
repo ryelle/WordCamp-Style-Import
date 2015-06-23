@@ -9,9 +9,16 @@ class WordCamp_StyleImport_Customize {
 	function __construct() {
 		add_action( 'init', array( $this, 'customizer_buffer' ) );
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
-		add_action( 'customize_preview_init', array( $this, 'add_link_tag' ) );
+		add_action( 'customize_preview_init', array( $this, 'register_previewer_callbacks' ) );
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
-		add_action( 'customize_save_wcsi_show_preview', array( $this, 'save_imported_style' ) );
+		add_action( 'customize_save_wcsi_source_site_id', array( $this, 'save_imported_style' ) );
+	}
+
+	/**
+	 * Register hook callback functions that only run in the Previewer
+	 */
+	function register_previewer_callbacks() {
+		add_action( 'wp_print_styles', array( $this, 'print_source_site_css' ) );
 	}
 
 	/**
@@ -120,14 +127,13 @@ class WordCamp_StyleImport_Customize {
 		$source_site = isset( $_GET['source-site'] ) ? absint( $_GET['source-site'] ) : 0;
 
 		if ( $source_site ) {
+			set_theme_mod( 'wcsi_source_site_id', $source_site );
 			switch_to_blog( $source_site );
 			$label = sprintf( __( 'Previewing styles from %s', 'wordcamporg' ), get_bloginfo( 'name' ) );
-			$url = $this->link_tag();
 			restore_current_blog();
 		} else {
 			// Doesn't really matter, we just need to keep the setting registered.
 			$label = __( 'Not previewing another WordCamp\'s site.', 'wordcamporg' );
-			$url = '';
 		}
 
 		$wp_customize->add_section( 'wcsi_preview', array(
@@ -135,69 +141,33 @@ class WordCamp_StyleImport_Customize {
 			'priority' => 10,
 		) );
 
-		$wp_customize->add_setting( 'wcsi_show_preview', array(
-			'default' => $url,
+		$wp_customize->add_setting( 'wcsi_source_site_id', array(
+			'default' => $source_site,
 		) );
 
-		$wp_customize->add_control( 'wcsi_show_preview', array(
+		$wp_customize->add_control( 'wcsi_source_site_id', array(
 			'label'       => $label,
 			'section'     => 'wcsi_preview',
 			'type'        => 'hidden',
-			'description' => __( 'Placeholder text that could be a description.', 'wordcamporg' ),
 		) );
 	}
 
-	function add_link_tag() {
-		add_action( 'wp_head', array( $this, 'print_link_tag' ) );
-	}
-
-	function print_link_tag() {
-		if ( ! $href = get_theme_mod( 'wcsi_show_preview', false ) ) {
-			$href = $this->link_tag();
-		}
-		echo '<link rel="stylesheet" id="custom-css-css" type="text/css" href="' . esc_url( $href ) . '" />';
-	}
-
 	/**
-	 * Called on customize initialization, add the previewing CSS.
+	 * Print the source site's custom CSS in an inline style block
 	 *
-	 * @return string
+	 * It can't be easily enqueued as an external stylesheet because Jetpack_Custom_CSS::link_tag() returns early
+	 * in the Customizer if the theme being previewed is different from the live theme.
 	 */
-	function link_tag() {
-		$source_site = isset( $_GET['source-site'] ) ? absint( $_GET['source-site'] ) : 0;
-		if ( ! $source_site ) {
-			return '';
+	function print_source_site_css() {
+		if ( method_exists( 'Jetpack', 'get_module_path' ) && $source_site_id = get_theme_mod( 'wcsi_source_site_id', false ) ) {
+			require_once( Jetpack::get_module_path( 'custom-css' ) );
+		} else {
+			return;
 		}
 
-		if ( ! class_exists( 'Jetpack_Custom_CSS' ) ) {
-			require Jetpack::get_module_path( 'custom-css' );
-		}
-
-		switch_to_blog( $source_site );
-		$css = '';
-		$safecss_post = Jetpack_Custom_CSS::get_current_revision();
-
-		if ( ! empty( $safecss_post['post_content'] ) ) {
-			$css = $safecss_post['post_content'];
-		}
-
-		$css = str_replace( array( '\\\00BB \\\0020', '\0BB \020', '0BB 020' ), '\00BB \0020', $css );
-
-		if ( $css == '' ) {
-			restore_current_blog();
-			return '';
-		}
-
-		$href = home_url( '/' );
-		$href = add_query_arg( 'custom-css', 1, $href );
-		$href = add_query_arg( 'csblog', $blog_id, $href );
-		$href = add_query_arg( 'cscache', 6, $href );
-		$href = add_query_arg( 'csrev', (int) get_option( $option . '_rev' ), $href );
-
-		$href = apply_filters( 'safecss_href', $href, $blog_id );
+		switch_to_blog( $source_site_id );
+		printf( '<style id="custom-css-css">%s</style>', Jetpack_Custom_CSS::get_css() );
 		restore_current_blog();
-
-		return $href;
 	}
 
 	/**
