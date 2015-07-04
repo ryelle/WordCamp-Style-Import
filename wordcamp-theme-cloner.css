@@ -1,18 +1,18 @@
-/* todo - align site name and preview button inline */
-
-/* todo 4.3-beta1 changed something and now everything misaligned? */
-
 .control-section-wctc-sites {
 	/*padding: 0 8px;*/
+	/* todo 4.3-beta1 changed something and now everything misaligned? */
+
 }
 
 	#wctc-sites {
 		overflow: auto;
 	}
 
-		.wctc-site {
+		/* todo review all the stuff copied from theme switcher */
+
+		.wctcSite {	/* todo change everything back to .wctc-site ? */
 			position: relative;
-			cursor: pointer;
+			/*cursor: pointer; todo just make it a link? */
 			border: 1px solid #DEDEDE;
 			box-shadow: 0 1px 1px -1px rgba( 0, 0, 0, 0.1 );
 		}
@@ -21,7 +21,7 @@
 				transition: opacity 0.2s ease-in-out 0s;
 			}
 
-				.wctc-site:hover .wctc-site-screenshot {
+				.wctcSite:hover .wctc-site-screenshot {
 					opacity: 0.4;
 				}
 
@@ -48,6 +48,6 @@
 				transition: opacity 0.1s ease-in-out 0s;
 			}
 
-				.wctc-site:hover .wctc-live-preview-label {
+				.wctcSite:hover .wctc-live-preview-label {
 					opacity: 1;
 				}
