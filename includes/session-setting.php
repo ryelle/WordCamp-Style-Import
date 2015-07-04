@@ -4,6 +4,7 @@ namespace WordCamp\Theme_Cloner;
 
 defined( 'WPINC' ) or die();
 
+
 /**
  * Custom Customizer Setting for a temporary session setting
  *
@@ -24,13 +25,14 @@ class Session_Setting extends \WP_Customize_Setting {       // todo better name 
 		}
 
 		//$this->manager->theme();
-		add_filter( 'pre_option_current_theme', array( $this, 'enable_source_site_theme' ), 11 );  // after \WP_Customize_Manager::current_theme()  // todo too late to do it here
-		var_dump( current_filter() );
+		//add_filter( 'pre_option_current_theme', array( $this, 'enable_source_site_theme' ), 11 );  // after \WP_Customize_Manager::current_theme()  // todo too late to do it here
+		//var_dump( current_filter() );
+
 
 		// todo source site id is already sanitized, right?
 
 		add_action( 'wp_head', array( $this, 'print_source_site_css' ), 99 );   // wp_print_styles is too early; the theme's stylesheet would get enqueued later and take precedence
-			// todo might be more appropriate hook for this
+		// todo might be more appropriate hook for this
 	}
 
 	/**
@@ -53,59 +55,24 @@ class Session_Setting extends \WP_Customize_Setting {       // todo better name 
 		restore_current_blog();
 	}
 
+	/*
 	public function enable_source_site_theme() {
 		var_dump($_REQUEST);
 		//wp_die();
 		echo 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 		return 'twentythirteen';
 	}
-}
+	*/
 
-/**
- * Custom Customizer Section for WordCamp sites
- */
-class Sites_Section extends \WP_Customize_Section {
-	public $type = 'wctc-sites';
+	// todo setup save() function here? will import instead of saving a setting. no, save checks caps, do update() instead
 
-	/**
-	 * Render the sites section, which behaves like a panel.
-	 */
-	protected function render() {
-		require_once( dirname( __DIR__ ) . '/templates/sites-section.php' );
-	}
-}
+	protected function update( $source_site_id ) {
+		wp_send_json_error($source_site_id);
 
-/**
- * Custom Customizer Control for a WordCamp site
- */
-class Site_Control extends \WP_Customize_Control {
-	//public $type = 'wctcSite';    todo see add_control call for notes
-	public $site_id, $site_name, $screenshot_url, $theme_slug;
+		// switch theme if that's not done for you
 
-	/**
-	 * Enqueue scripts/styles
-	 */
-	public function enqueue() {
-		wp_enqueue_style(  'wordcamp-theme-cloner' );
-		wp_enqueue_script( 'wordcamp-theme-cloner' );
+		// import css
 
-		// todo enqueue on section instead, b/c some js will run on those elements, or enqueue on plugin, b/c it acts on multiple components?
-	}
-
-	/**
-	 * Don't render the control content from PHP, as it's rendered via JS on load.
-	 */
-	public function render_content() {
-		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
-		$preview_url = add_query_arg(
-			array(
-				'theme' => $this->theme_slug,
-				'wctc_source_site_id' => $this->site_id,        // todo don't need this anymore since using post_value()?   or still need it for theme switch
-			),
-			$current_url
-		);
-
-		require( dirname( __DIR__ ) . '/templates/site-control.php' );
-		// todo render js template instead b/c will have backbone collection so can filter on the fly. maybe not in v1 though?
+		// in future, do menus, widgets, front page settings, etc
 	}
 }
