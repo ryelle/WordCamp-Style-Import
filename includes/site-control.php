@@ -4,8 +4,6 @@ namespace WordCamp\Theme_Cloner;
 
 defined( 'WPINC' ) or die();
 
-
-
 /**
  * Custom Customizer Control for a WordCamp site
  */

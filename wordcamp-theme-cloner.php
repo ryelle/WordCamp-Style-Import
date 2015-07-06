@@ -66,19 +66,21 @@ function register_scripts() {
  * @param \WP_Customize_Manager $wp_customize
  */
 function register_customizer_components( $wp_customize ) {
-	require_once( __DIR__ . '/includes/session-setting.php' );
+	require_once( __DIR__ . '/includes/source-site-id-setting.php' );
 	require_once( __DIR__ . '/includes/sites-section.php' );
 	require_once( __DIR__ . '/includes/site-control.php' );
 
 	$wp_customize->register_control_type( __NAMESPACE__ . '\Site_Control' );
 
-	$wp_customize->add_setting( new Session_Setting(
+	$wp_customize->add_setting( new Source_Site_ID_Setting(
 		$wp_customize,
 		'wctc_source_site_id',
 		array(
 			'default'           => 0,                                   // todo not needed?
 			// 'type'              => 'wctc_filter_setting',   // todo better name
 			'sanitize_callback' => 'absint',        // todo not needed, or need to actually use this instead of doing manually?
+
+			// todo should probably just define all those in the class itself, rather than here
 		)
 
 	// todo capability should be array( 'switch_themes', 'edit_theme_options' ) ? same in normal, but good defence in depth. api allows array or just single cap?
