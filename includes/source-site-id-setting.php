@@ -13,8 +13,15 @@ defined( 'WPINC' ) or die();
  */
 class Source_Site_ID_Setting extends \WP_Customize_Setting {
 	public $type = 'wctc-source-site-id';
+	public $default = 0;                         // todo not needed?
+	public $sanitize_callback = 'absint';        // todo not needed, or need to actually use this instead of doing manually?
+		// todo capability should be array( 'switch_themes', 'edit_theme_options' ) ? same in normal, but good defence in depth. api allows array or just single cap?
+		// todo add js sanitization callback?
 	protected $preview_source_site_id;
 
+	/**
+	 * Preview another site before it's imported
+	 */
 	public function preview() {
 		if ( ! $this->preview_source_site_id = $this->manager->post_value( $this ) ) {
 			return;
@@ -26,7 +33,6 @@ class Source_Site_ID_Setting extends \WP_Customize_Setting {
 			// todo there might be a more appropriate hook for this
 		add_filter( 'get_post_metadata',       array( $this, 'preview_jetpack_postmeta' ), 10, 4 );
 		add_filter( 'safecss_skip_stylesheet', array( $this, 'preview_skip_stylesheet'  ) );
-
 	}
 
 	/**

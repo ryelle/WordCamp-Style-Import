@@ -11,7 +11,7 @@ class Sites_Section extends \WP_Customize_Section {
 	public $type = 'wctc-sites';
 
 	/**
-	 * Render the sites section, which behaves like a panel.
+	 * Render the section's content
 	 */
 	protected function render() {
 		require_once( dirname( __DIR__ ) . '/templates/sites-section.php' );

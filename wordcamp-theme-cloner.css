@@ -1,7 +1,12 @@
-.control-section-wctc-sites {
-	/*padding: 0 8px;*/
-	/* todo 4.3-beta1 changed something and now everything misaligned? */
+/*
+ * todo 4.3-beta1 changed something and now ul.accordion-sub-container.control-panel-content has a ~50px space above it b/c `top` set wrong
+ *
+ * .accordion-sub-container.control-panel-content left: 300px gets unapplied when switching back and forth between panels.
+ * maybe the width has something to do with it, 300px vs 284px.
+ */
 
+.control-section-wctc-sites {
+	padding: 0 8px;
 }
 
 	#wctc-sites {
@@ -24,12 +29,6 @@
 				.wctcSite:hover .wctc-site-screenshot {
 					opacity: 0.4;
 				}
-
-			.wctc-actions {
-				padding: 9px 10px 0;
-				background: rgba( 244, 244, 244, 0.7 ) none repeat scroll 0 0;
-				border-left: 1px solid rgba( 0, 0, 0, 0.05 );
-			}
 
 			.wctc-live-preview-label {
 				opacity: 0;
