@@ -30,7 +30,6 @@ class Source_Site_ID_Setting extends \WP_Customize_Setting {
 		// todo source site id is already sanitized, right?
 
 		add_action( 'wp_head',                 array( $this, 'preview_source_site_css'  ), 99 );   // wp_print_styles is too early; the theme's stylesheet would get enqueued later and take precedence
-			// todo there might be a more appropriate hook for this
 		add_filter( 'get_post_metadata',       array( $this, 'preview_jetpack_postmeta' ), 10, 4 );
 		add_filter( 'safecss_skip_stylesheet', array( $this, 'preview_skip_stylesheet'  ) );
 	}

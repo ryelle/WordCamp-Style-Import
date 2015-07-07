@@ -17,8 +17,6 @@ License:     GPLv2 or later
 /* todo
  *
  * i18n strings
- * phpdoc everything
- * jsdoc everything
  * change name to site cloner, update prefix
  * setup menus and widgets too, home page post vs page option
  */
@@ -27,9 +25,9 @@ License:     GPLv2 or later
 /*
  * todo commit msg
  *
- * because such a fundamental change, removed 90% of code, so went ahead and rewrote from scratch rather than trying to integrate the two
+ * because such a fundamental change, removed 90% of code, easier to rewrite from scratch rather than trying to integrate the two
  *
- * fixes 11, { 3 others }
+ * fixes 11, { several others }
  */
 
 
@@ -70,17 +68,20 @@ function register_customizer_components( $wp_customize ) {
 
 	$wp_customize->register_control_type( __NAMESPACE__ . '\Site_Control' );
 
-	$wp_customize->add_setting( new Source_Site_ID_Setting( $wp_customize, 'wctc_source_site_id', array() ) );
-
-	$wp_customize->add_panel( new \WP_Customize_Panel(
+	$wp_customize->add_setting( new Source_Site_ID_Setting(
 		$wp_customize,
+		'wctc_source_site_id',
+		array()
+	) );
+
+	$wp_customize->add_panel(
 		'wordcamp_theme_cloner',
 		array(
 			'type'        => 'wctcPanel',
 			'title'       => 'Clone Another WordCamp',
 			'description' => "Clone another WordCamp's theme and custom CSS as a starting point for your site.",
 		)
-	));
+	);
 
 	$wp_customize->add_section( new Sites_Section(
 		$wp_customize,

@@ -7,17 +7,20 @@
 
 	var api = wp.customize;
 
+	/**
+	 * The Clone Another WordCamp panel
+	 */
 	api.wctcPanel = api.Panel.extend( {
 		/**
 		 * todo
 		 */
 		ready : function() {
 			var urlParams = this.getUrlParams( window.location );
-			
+
 			if ( urlParams.hasOwnProperty( 'wctc_source_site_id' ) ) {
 				this.expand();
 				api( 'wctc_source_site_id' ).set( urlParams.wctc_source_site_id );
-					// todo explain why have to do this, b/c it's inefficient. have to reload entire theme taking page refresh, but can't import styles then b/c {forget why}
+					// todo explain why have to do this, b/c it's inefficient. have to reload entire theme taking page refresh, then reload previewer, but can't import styles during initial refresh b/c {forget why}
 			}
 		},
 
@@ -48,19 +51,16 @@
 		}
 	} );
 
+	/**
+	 * Custom control representing a site that can be previewed/imported
+	 */
 	api.wctcSiteControl = api.Control.extend( {
 		/**
 		 * todo
 		 */
 		ready : function() {
-			//console.log( 'control ready()' );   // todo ready() gets called once for every control 5x? only want to do this once
-
-
-
 			this.container.on( 'click', '.wctcSite', this.previewSite );    // todo need to specify class? doesn't this.container already mean that?
 			//console.log( this.container );
-
-
 
 			// need to bind to the setting being changed instead of making our own click event?
 		},
@@ -94,11 +94,11 @@
 			if ( api.settings.theme.stylesheet === requestedSiteTheme ) {
 				api( 'wctc_source_site_id' ).set( requestedSiteID );
 
-				// todo might want to update URL with new ID anyway, just to be proper, but that would involve pushstate to avoid refreshing page? dunno, probably not worth it at this fucking point
+				// todo might want to update URL with new ID anyway, just to be proper, but that would involve pushstate to avoid refreshing page? dunno, probably not worth it at this point
 			} else {
 				window.parent.location = previewUrl;
 
-			    // todo wtf, just make it a fucking link to begin with. remove cursor: pointer toop. or is this needed to trigger the setting?
+			    // todo wtf, just make it a link to begin with. remove cursor: pointer toop. or is this needed to trigger the setting?
 					// but also have to set site id, maybe do that on php side or something?
 					// tried and caused problem w/ confirm() dialog b/c leaving edited page, but could have been unrelated?
 			}
