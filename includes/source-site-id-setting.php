@@ -1,6 +1,6 @@
 <?php
 
-namespace WordCamp\Theme_Cloner;
+namespace WordCamp\Site_Cloner;
 
 defined( 'WPINC' ) or die();
 
@@ -12,11 +12,9 @@ defined( 'WPINC' ) or die();
  * into the default model that the Customizer expects.
  */
 class Source_Site_ID_Setting extends \WP_Customize_Setting {
-	public $type = 'wctc-source-site-id';
-	public $default = 0;                         // todo not needed?
-	public $sanitize_callback = 'absint';        // todo not needed, or need to actually use this instead of doing manually?
-		// todo capability should be array( 'switch_themes', 'edit_theme_options' ) ? same in normal, but good defence in depth. api allows array or just single cap?
-		// todo add js sanitization callback?
+	public $type              = 'wcsc-source-site-id';
+	public $default           = 0;
+	public $sanitize_callback = 'absint';
 	protected $preview_source_site_id;
 
 	/**
@@ -26,8 +24,6 @@ class Source_Site_ID_Setting extends \WP_Customize_Setting {
 		if ( ! $this->preview_source_site_id = $this->manager->post_value( $this ) ) {
 			return;
 		}
-
-		// todo source site id is already sanitized, right?
 
 		add_action( 'wp_head',                 array( $this, 'preview_source_site_css'  ), 99 );   // wp_print_styles is too early; the theme's stylesheet would get enqueued later and take precedence
 		add_filter( 'get_post_metadata',       array( $this, 'preview_jetpack_postmeta' ), 10, 4 );
@@ -48,7 +44,7 @@ class Source_Site_ID_Setting extends \WP_Customize_Setting {
 		}
 
 		switch_to_blog( $this->preview_source_site_id );
-		printf( '<style id="wctc-source-site-custom-css">%s</style>', \Jetpack_Custom_CSS::get_css( true ) );
+		printf( '<style id="wcsc-source-site-custom-css">%s</style>', \Jetpack_Custom_CSS::get_css( true ) );
 		restore_current_blog();
 	}
 
@@ -115,8 +111,6 @@ class Source_Site_ID_Setting extends \WP_Customize_Setting {
 	 * @param int $source_site_id
 	 */
 	protected function update( $source_site_id ) {
-		// todo need to do any nonce/cap checks or anything? sanitize value?
-
 		switch_to_blog( $source_site_id );
 
 		if ( ! $source_cite_css_post = \Jetpack_Custom_CSS::get_current_revision() ) {

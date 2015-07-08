@@ -1,36 +1,17 @@
 <?php
 
-namespace WordCamp\Theme_Cloner;
+namespace WordCamp\Site_Cloner;
 
 defined( 'WPINC' ) or die();
 
 /*
-Plugin Name: WordCamp Theme Cloner
-Description: Allows organizers to clone the theme and custom CSS, etc from other WordCamps as a starting point for their own site.
+Plugin Name: WordCamp Site Cloner
+Description: Allows organizers to clone another WordCamp's theme and custom CSS as a starting point for their site.
 Version:     0.1
 Author:      WordCamp.org
 Author URI:  http://wordcamp.org
 License:     GPLv2 or later
 */
-
-
-/* todo
- *
- * i18n strings
- * change name to site cloner, update prefix
- * setup menus and widgets too, home page post vs page option
- */
-
-
-/*
- * todo commit msg
- *
- * because such a fundamental change, removed 90% of code, easier to rewrite from scratch rather than trying to integrate the two
- *
- * fixes 11, { several others }
- */
-
-
 
 add_action( 'plugins_loaded',        __NAMESPACE__ . '\get_wordcamp_sites' );
 add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\register_scripts' );
@@ -41,15 +22,15 @@ add_action( 'customize_register',    __NAMESPACE__ . '\register_customizer_compo
  */
 function register_scripts() {
 	wp_register_style(
-		'wordcamp-theme-cloner',
-		plugin_dir_url( __FILE__ ) . 'wordcamp-theme-cloner.css',
+		'wordcamp-site-cloner',
+		plugin_dir_url( __FILE__ ) . 'wordcamp-site-cloner.css',
 		array(),
 		1
 	);
 
 	wp_register_script(
-		'wordcamp-theme-cloner',
-		plugin_dir_url( __FILE__ ) . 'wordcamp-theme-cloner.js',
+		'wordcamp-site-cloner',
+		plugin_dir_url( __FILE__ ) . 'wordcamp-site-cloner.js',
 		array( 'jquery', 'customize-controls' ),
 		1,
 		true
@@ -70,25 +51,25 @@ function register_customizer_components( $wp_customize ) {
 
 	$wp_customize->add_setting( new Source_Site_ID_Setting(
 		$wp_customize,
-		'wctc_source_site_id',
+		'wcsc_source_site_id',
 		array()
 	) );
 
 	$wp_customize->add_panel(
-		'wordcamp_theme_cloner',
+		'wordcamp_site_cloner',
 		array(
-			'type'        => 'wctcPanel',
-			'title'       => 'Clone Another WordCamp',
-			'description' => "Clone another WordCamp's theme and custom CSS as a starting point for your site.",
+			'type'        => 'wcscPanel',
+			'title'       => __( 'Clone Another WordCamp', 'wordcamporg' ),
+			'description' => __( "Clone another WordCamp's theme and custom CSS as a starting point for your site.", 'wordcamporg' ),
 		)
 	);
 
 	$wp_customize->add_section( new Sites_Section(
 		$wp_customize,
-		'wctc_sites',
+		'wcsc_sites',
 		array(
-			'panel' => 'wordcamp_theme_cloner',
-			'title' => 'WordCamp Sites',
+			'panel' => 'wordcamp_site_cloner',
+			'title' => __( 'WordCamp Sites', 'wordcamporg' ),
 		)
 	) );
 
@@ -99,9 +80,9 @@ function register_customizer_components( $wp_customize ) {
 
 		$wp_customize->add_control( new Site_Control(
 			$wp_customize,
-			'wctc_site_id_' . $wordcamp['site_id'],
+			'wcsc_site_id_' . $wordcamp['site_id'],
 			array(
-				'type'           => 'wctcSite',                      // todo should be able to set this in control instead of here, but if do that then control contents aren't populated
+				'type'           => 'wcscSite',                      // todo should be able to set this in control instead of here, but if do that then control contents aren't rendered
 				'site_id'        => $wordcamp['site_id'],
 				'site_name'      => $wordcamp['name'],
 				'theme_slug'     => $wordcamp['theme_slug'],
@@ -127,7 +108,7 @@ function get_wordcamp_sites() {
 		return array();
 	}
 
-	$transient_key = 'wctc_sites';
+	$transient_key = 'wcsc_sites';
 
 	if ( $sites = get_site_transient( $transient_key ) ) {
 		return $sites;
@@ -149,19 +130,6 @@ function get_wordcamp_sites() {
 				'value'   => strtotime( 'now - 1 month' ),
 				'compare' => '<'
 			),
-
-			/*
-			 * @todo
-			 *
-			 * exclude camps that aren't done building their theme yet
-			 *  - those that have coming soon enabled
-			 *  - those that are more the X months away from camp?
-			 *  - what other criteria could be used to determine this?
-			 *  - only ones with dates and urls -- already doing below, but can do in meta query instead? probably faster in meta query, even though meta queries are slow
-			 *  - tickets open (before camp starts) or attendees (after camp closed) ?
-			 *
-			 * exclude camps older than 2-3 years? will probably be out of fashion and don't want to have to sort through bazillion choices, even with filters
-			 */
 		),
 	) );
 
@@ -204,5 +172,5 @@ function get_wordcamp_sites() {
 function get_screenshot_url( $site_url ) {
 	$screenshot_url = add_query_arg( 'w', 275, 'https://www.wordpress.com/mshots/v1/' . rawurlencode( $site_url ) );
 
-	return apply_filters( 'wctc_site_screenshot_url', $screenshot_url );
+	return apply_filters( 'wcsc_site_screenshot_url', $screenshot_url );
 }
